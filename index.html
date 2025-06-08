@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=0">
   <title>Dobro došli u Kladanj</title>
-  
   <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -19,38 +17,31 @@
     }
   </style>
 </head>
-
 <body>
-
 <!-- AUDIO ZA JEZIKE -->
-<audio id="audio-bosnian" autoplay >
-  <source src="https://cdn.glitch.global/78781dc9-6533-446d-a083-7ef70ccb481a/luvvoice.com-20250427-Xohj0z.mp3?v=1745774665652" type="audio/mpeg">
+<audio id="audio-bosnian" autoplay>
+  <source src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/bebravapecinabosanski.mp3" type="audio/mpeg">
 </audio>
 <audio id="audio-english" preload="auto">
-  <source src="https://cdn.glitch.global/78781dc9-6533-446d-a083-7ef70ccb481a/luvvoice.com-20250427-PbTn6u.mp3?v=1745774874550" type="audio/mpeg">
+  <source src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/bebravaengleski.mp3" type="audio/mpeg">
 </audio>
 <audio id="audio-german" preload="auto">
-  <source src="https://cdn.glitch.global/78781dc9-6533-446d-a083-7ef70ccb481a/luvvoice.com-20250427-lB4yHu.mp3?v=1745774691087" type="audio/mpeg">
+  <source src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/bebravanjemacki.mp3" type="audio/mpeg">
 </audio>
 <audio id="audio-italian" preload="auto">
-  <source src="https://cdn.glitch.global/78781dc9-6533-446d-a083-7ef70ccb481a/luvvoice.com-20250427-3X73UA.mp3?v=1745774902563" type="audio/mpeg">
+  <source src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/bebravaitalijanski.mp3" type="audio/mpeg">
 </audio>
 <audio id="audio-turkish" preload="auto">
-  <source src="https://cdn.glitch.global/78781dc9-6533-446d-a083-7ef70ccb481a/luvvoice.com-20250427-SuRiHS.mp3?v=1745775022061" type="audio/mpeg">
+  <source src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/bebravaturski.mp3" type="audio/mpeg">
 </audio>
-
 <a-scene embedded arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;">
-  
   <!-- POZADINSKA PLOČA -->
   <a-plane color="#008000" height="3.5" width="6.5" position="0 0.5 -5" opacity="0.9"></a-plane>
-  
   <!-- UVEZENI 3D MODEL -->
   <a-assets>
-    <a-asset-item id="model" src="https://cdn.glitch.global/d3488c45-0ac5-41f9-ab49-e0c459fcd66f/greeting_waving_110_frames_loop.glb?v=1741639412806"></a-asset-item>
+    <a-asset-item id="model" src="https://cdn.jsdelivr.net/gh/saracen7mi/bebravapecina@main/greeting_waving_.glb"></a-asset-item>
   </a-assets>
-
   <a-entity id="animatedModel" gltf-model="#model" position="0 -0.1 -4" scale="1 1 1" custom-animation></a-entity>
-
   <!-- ANIMACIJA ZA 3D MODEL -->
   <script>
     AFRAME.registerComponent('custom-animation', {
@@ -60,7 +51,15 @@
           const model = e.detail.model;
           this.mixer = new THREE.AnimationMixer(model);
           const clip = model.animations[0];
-          this.mixer.clipAction(clip).play();
+          if (clip) {
+            this.mixer.clipAction(clip).play();
+            console.log('Model učitan i animacija pokrenuta.');
+          } else {
+            console.warn("No animations found in the model!");
+          }
+        });
+        el.addEventListener('model-error', (e) => {
+          console.error('Greška pri učitavanju modela:', e.detail);
         });
         this.clock = new THREE.Clock();
       },
@@ -69,15 +68,12 @@
       }
     });
   </script>
-
   <!-- ZVIJEZDE KOJE PADAJU -->
   <a-entity id="stars-container"></a-entity>
-
   <script>
     AFRAME.registerComponent("falling-stars", {
       init: function () {
         let scene = document.querySelector("#stars-container");
-
         for (let i = 0; i < 15; i++) {
           let star = document.createElement("a-sphere");
           star.setAttribute("radius", "0.05");
@@ -91,7 +87,6 @@
         function fall() {
           let startY = Math.random() * 3 + 2;
           let duration = Math.random() * 3000 + 2000;
-
           star.setAttribute("position", `${(Math.random() - 0.5) * 8} ${startY} -4`);
           star.setAttribute("animation", {
             property: "position",
@@ -100,20 +95,16 @@
             easing: "linear",
             loop: false
           });
-
           setTimeout(fall, duration);
         }
         fall();
       }
     });
-
     document.querySelector("#stars-container").setAttribute("falling-stars", "");
   </script>
-
   <!-- SVIJETLOSNI EFEKTI -->
   <a-light id="flash-light" type="point" intensity="0" color="white" position="0 3 -3"></a-light>
   <a-light type="ambient" color="#666"></a-light>
-
   <script>
     function flashEffect() {
       let light = document.querySelector("#flash-light");
@@ -126,37 +117,28 @@
     }
     flashEffect();
   </script>
-
   <!-- DUGMIĆI ZA JEZIKE -->
   <a-entity id="eng-button" geometry="primitive: plane; height: 0.5; width: 1.5" material="color: red" position="-2.5 2 -4.9"
     text="value: ENG; color: white; align: center; width: 3;" class="clickable"></a-entity>
-
   <a-entity id="deu-button" geometry="primitive: plane; height: 0.5; width: 1.5" material="color: yellow" position="-1 2 -4.9"
     text="value: DEU; color: black; align: center; width: 3;" class="clickable"></a-entity>
-
   <a-entity id="ita-button" geometry="primitive: plane; height: 0.5; width: 1.5" material="color: blue" position="0.5 2 -4.9"
     text="value: ITA; color: white; align: center; width: 3;" class="clickable"></a-entity>
-
   <a-entity id="tur-button" geometry="primitive: plane; height: 0.5; width: 1.5" material="color: brown" position="2 2 -4.9"
     text="value: TUR; color: white; align: center; width: 3;" class="clickable"></a-entity>
-
   <!-- TEKST DOBRODOSLICE -->
-  <a-text value="DOBRODOSLI                              SPILJA BEBRAVA KLADANJ" position="0 1.1 -5" align="center" color="white" width="5"></a-text>
-
+  <a-text value="DOBRODOSLI SPILJA BEBRAVA KLADANJ" position="0 1.1 -5" align="center" color="white" width="5"></a-text>
   <!-- LINK LOKACIJA -->
   <a-entity position="0 -0.9 -4.9" id="location-link">
     <a-text value="Lokacija:" position="-2 0 0.05" color="#000000" align="center" scale="1.2 1.4 1.4"></a-text>
     <a-plane color="#FF0000" height="0.5" width="1.6" opacity="0.5" position="-0.3 0 0.06"></a-plane>
     <a-text value="Klikni ovde" position="-0.4 0 0.06" color="#000000" align="center" scale="1.2 1.2 1.2" class="clickable"></a-text>
   </a-entity>
-
   <!-- JEDNA JEDINA KAMERA -->
   <a-camera position="0 1.6 0">
     <a-cursor color="#FF0000" radius="0.05" position="0 0 -1"></a-cursor>
   </a-camera>
-
 </a-scene>
-
 <!-- SKRIPTA ZA POKRETANJE MUZIKE NA KLIK -->
 <script>
   function stopAllAudio() {
@@ -165,38 +147,34 @@
       audio.currentTime = 0;
     });
   }
-
   document.querySelector("#eng-button").addEventListener("click", () => {
     stopAllAudio();
     document.getElementById("audio-english").play();
   });
-
   document.querySelector("#deu-button").addEventListener("click", () => {
     stopAllAudio();
     document.getElementById("audio-german").play();
   });
-
   document.querySelector("#ita-button").addEventListener("click", () => {
     stopAllAudio();
     document.getElementById("audio-italian").play();
   });
-
   document.querySelector("#tur-button").addEventListener("click", () => {
     stopAllAudio();
     document.getElementById("audio-turkish").play();
   });
-
-    window.addEventListener('load', () => {
-    document.getElementById("audio-bosnian").play();
+  window.addEventListener('load', () => {
+    document.getElementById("audio-bosnian").play().catch(error => {
+      console.warn('Automatska reprodukcija nije dozvoljena:', error);
+      document.body.addEventListener('click', () => {
+        document.getElementById("audio-bosnian").play();
+      }, { once: true });
+    });
   });
-  
-  
   // Opcionalno: klik na crveno "Klikni ovde" vodi na Google Maps
-    document.getElementById('location-link').addEventListener('click', () => {
-    window.location.href = 'https://www.google.com/maps/dir/?api=1&destination= 44.19801549642852, 18.619446818688356  &travelmode=driving';
-});
+  document.getElementById('location-link').addEventListener('click', () => {
+    window.location.href = 'https://www.google.com/maps/dir/?api=1&destination=44.19801549642852,18.619446818688356&travelmode=driving';
+  });
 </script>
-
 </body>
 </html>
-
